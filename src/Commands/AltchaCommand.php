@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Grant Holle\Altcha\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class AltchaCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-altcha';
 
     public $description = 'My command';
 
