@@ -1,5 +1,5 @@
 <?php
 
-use Grant Holle\Altcha\Tests\TestCase;
+use GrantHolle\Altcha\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

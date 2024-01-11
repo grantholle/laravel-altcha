@@ -1,6 +1,6 @@
 <?php
 
-namespace Grant Holle\Altcha;
+namespace GrantHolle\Altcha;
 
 class Altcha
 {

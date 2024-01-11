@@ -31,13 +31,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Grant Holle\\Altcha\\": "src/",
-            "Grant Holle\\Altcha\\Database\\Factories\\": "database/factories/"
+            "GrantHolle\\Altcha\\": "src/",
+            "GrantHolle\\Altcha\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Grant Holle\\Altcha\\Tests\\": "tests/",
+            "GrantHolle\\Altcha\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -69,10 +69,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Grant Holle\\Altcha\\AltchaServiceProvider"
+                "GrantHolle\\Altcha\\AltchaServiceProvider"
             ],
             "aliases": {
-                "Altcha": "Grant Holle\\Altcha\\Facades\\Altcha"
+                "Altcha": "GrantHolle\\Altcha\\Facades\\Altcha"
             }
         }
     },

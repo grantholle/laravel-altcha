@@ -1,10 +1,10 @@
 <?php
 
-namespace Grant Holle\Altcha\Tests;
+namespace GrantHolle\Altcha\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Grant Holle\Altcha\AltchaServiceProvider;
+use GrantHolle\Altcha\AltchaServiceProvider;
 
 class TestCase extends Orchestra
 {

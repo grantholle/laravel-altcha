@@ -1,10 +1,9 @@
 <?php
 
-namespace Grant Holle\Altcha;
+namespace GrantHolle\Altcha;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Grant Holle\Altcha\Commands\AltchaCommand;
 
 class AltchaServiceProvider extends PackageServiceProvider
 {
@@ -17,9 +16,6 @@ class AltchaServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-altcha')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-altcha_table')
-            ->hasCommand(AltchaCommand::class);
+            ->hasConfigFile();
     }
 }
