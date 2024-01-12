@@ -1,6 +1,23 @@
 <?php
 
-// config for Grant Holle/Altcha
 return [
 
+    /*
+     * The algorithm to use for hashing the challenge.
+     * Should be SHA-256, SHA-384 or SHA-512.
+     */
+    'algorithm' => env('ALTCHA_ALGORITHM', 'SHA-256'),
+
+    /*
+     * The secret key to use for hashing the challenge.
+     */
+    'hmac_key' => env('ALTCHA_HMAC_KEY'),
+
+    /*
+     * The minimum and maximum values for the challenge.
+     * The bigger larger the number, the more difficult the challenge.
+     */
+    'range_min' => env('ALTCHA_RANGE_MIN', 1e3),
+
+    'range_max' => env('ALTCHA_RANGE_MAX', 1e5),
 ];
