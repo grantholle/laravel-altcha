@@ -8,15 +8,6 @@ use GrantHolle\Altcha\AltchaServiceProvider;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Grant Holle\\Altcha\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
-    }
-
     protected function getPackageProviders($app)
     {
         return [
@@ -27,10 +18,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-altcha_table.php.stub';
-        $migration->up();
-        */
+        config()->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
+        config()->set('altcha.hmac_key', 'test-key');
     }
 }

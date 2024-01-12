@@ -20,4 +20,16 @@ return [
     'range_min' => env('ALTCHA_RANGE_MIN', 1e3),
 
     'range_max' => env('ALTCHA_RANGE_MAX', 1e5),
+
+    /*
+     * The route path to use for the challenge.
+     * If you want to implement the logic yourself
+     * set this to a null or empty value.
+     */
+    'route' => '/altcha-challenge',
+
+    /*
+     * The middleware to use for the challenge endpoint.
+     */
+    'middleware' => ['web', 'throttle:10,1'],
 ];

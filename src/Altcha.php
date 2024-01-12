@@ -2,6 +2,8 @@
 
 namespace GrantHolle\Altcha;
 
+use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
+
 class Altcha
 {
     public function __construct(
@@ -21,7 +23,7 @@ class Altcha
             'sha-256' => 'sha256',
             'sha-384' => 'sha384',
             'sha-512' => 'sha512',
-            default => throw new \Exception('Invalid algorithm'),
+            default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-256, SHA-384 or SHA-512.'),
         };
         $challenge = hash($algorithm, $salt . $number);
         $signature = hash_hmac($algorithm, $challenge, $this->key);

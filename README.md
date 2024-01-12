@@ -1,19 +1,11 @@
-# A Laravel server implementation for Altcha.
+# Laravel Altcha
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/grantholle/laravel-altcha.svg?style=flat-square)](https://packagist.org/packages/grantholle/laravel-altcha)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/grantholle/laravel-altcha/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/grantholle/laravel-altcha/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/grantholle/laravel-altcha/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/grantholle/laravel-altcha/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/grantholle/laravel-altcha.svg?style=flat-square)](https://packagist.org/packages/grantholle/laravel-altcha)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-altcha.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-altcha)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+This is a Laravel implementation for the server-side of the [Altcha](https://altcha.org/), a proof-of-work captcha that does not require any third-party service.
 
 ## Installation
 
@@ -23,37 +15,85 @@ You can install the package via composer:
 composer require grantholle/laravel-altcha
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-altcha-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
+Optionally, publish the config file with:
 
 ```bash
 php artisan vendor:publish --tag="laravel-altcha-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-altcha-views"
-```
-
 ## Usage
 
+Out of the box, the package registers a `/altcha-challenge` endpoint to use you on your frontend. 
+
+## Frontend
+
+Following the [frontend integration](https://altcha.org/docs/website-integration), use the following snippet to get a challenge:
+
+```html
+<altcha-widget challengeurl="/altcha-challenge"></altcha-widget>
+```
+
+Implementation will be different given your frontend, but here's an example Vue component to use:
+
+```vue
+<template>
+  <altcha-widget challengeurl="/altcha-challenge" @statechange="stateChanged"></altcha-widget>
+</template>
+
+<script setup>
+import 'altcha'
+
+const emit = defineEmits(['update:modelValue'])
+const stateChanged = ev => {
+  if (ev.detail.state === 'verified') {
+    emit('update:modelValue', ev.detail.payload)
+  }
+}
+</script>
+```
+
+In an Inertja.js form, you could use this component like so:
+
+```vue
+<template>
+  <form @submit.prevent="form.post('/login')">
+    <label for="email">Email</label>
+    <input type="email" name="email" v-model="form.email">
+    
+    <label for="password">Password</label>
+    <input type="password" name="password" v-model="form.password">
+    
+    <Altcha v-model="form.token" />
+    
+    <button type="submit">Submit</button>
+  </form>
+</template>
+
+<script setup>
+import { useForm } from '@inertiajs/inertia-vue3'
+// This is the component we made above
+import Altcha from '@/components/forms/Altcha.vue'
+
+const form = useForm({
+  email: null,
+  password: null,
+  token: null,
+})
+</script>
+```
+
+## Backend validation
+
+To validate the frontend-generated token/payload, there's a `ValidAltchaToken` rule you can use, assuming the token is passed as `token` in the request:
+
 ```php
-$altcha = new Grant Holle\Altcha();
-echo $altcha->echoPhrase('Hello, Grant Holle!');
+use Grantholle\LaravelAltcha\Rules\ValidAltchaToken;
+
+$request->validate([
+    'email' => ['required', 'email'],
+    'password' => ['required'],
+    'token' => [new ValidAltcha()],
+]);
 ```
 
 ## Testing
