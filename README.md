@@ -23,6 +23,15 @@ php artisan vendor:publish --tag="laravel-altcha-config"
 
 ## Usage
 
+In `.env` (or published config file), set the following variables:
+
+```dotenv
+# Required, sort of like a password
+ALTCHA_HMAC_KEY=
+# Optional, defaults to SHA-256. Can be SHA-384 or SHA-512
+# ALTCHA_ALGORITHM="SHA-256"
+```
+
 Out of the box, the package registers a `/altcha-challenge` endpoint to use you on your frontend. 
 
 ## Frontend
