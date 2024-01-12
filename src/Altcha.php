@@ -11,10 +11,10 @@ class Altcha
         protected string $key,
         protected int $rangeMin,
         protected int $rangeMax,
-    )
-    { }
+    ) {
+    }
 
-    public function createChallenge(string $salt = null, int $number = null): array
+    public function createChallenge(?string $salt = null, ?int $number = null): array
     {
         $salt = $salt ?? bin2hex(random_bytes(12));
         $number = $number ?? random_int($this->rangeMin, $this->rangeMax);
@@ -25,7 +25,7 @@ class Altcha
             'sha-512' => 'sha512',
             default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-256, SHA-384 or SHA-512.'),
         };
-        $challenge = hash($algorithm, $salt . $number);
+        $challenge = hash($algorithm, $salt.$number);
         $signature = hash_hmac($algorithm, $challenge, $this->key);
 
         return [
@@ -50,5 +50,4 @@ class Altcha
 
         return false;
     }
-
 }
