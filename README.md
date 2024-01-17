@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/grantholle/laravel-altcha/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/grantholle/laravel-altcha/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/grantholle/laravel-altcha.svg?style=flat-square)](https://packagist.org/packages/grantholle/laravel-altcha)
 
-This is a Laravel implementation for the server-side of the [Altcha](https://altcha.org/), a proof-of-work captcha that does not require any third-party service.
+This is a Laravel implementation for the server-side of [Altcha](https://altcha.org/), a proof-of-work captcha that does not require any third-party service.
 
 ## Installation
 
