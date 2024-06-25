@@ -18,7 +18,7 @@ composer require grantholle/laravel-altcha
 Optionally, publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-altcha-config"
+php artisan vendor:publish --tag="altcha-config"
 ```
 
 ## Usage
@@ -93,10 +93,10 @@ const form = useForm({
 
 ## Backend validation
 
-To validate the frontend-generated token/payload, there's a `ValidAltchaToken` rule you can use, assuming the token is passed as `token` in the request:
+To validate the frontend-generated token/payload, there's a `ValidAltcha` rule you can use, assuming the token is passed as `token` in the request:
 
 ```php
-use Grantholle\LaravelAltcha\Rules\ValidAltchaToken;
+use GrantHolle\Altcha\Rules\ValidAltcha;
 
 $request->validate([
     'email' => ['required', 'email'],
