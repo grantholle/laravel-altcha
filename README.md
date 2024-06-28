@@ -101,7 +101,7 @@ use Grantholle\LaravelAltcha\Rules\ValidAltchaToken;
 $request->validate([
     'email' => ['required', 'email'],
     'password' => ['required'],
-    'token' => [new ValidAltcha()],
+    'altcha' => ['required', new ValidAltcha()],
 ]);
 ```
 
