@@ -22,6 +22,17 @@ return [
     'range_max' => env('ALTCHA_RANGE_MAX', 1e5),
 
     /*
+     * The expiration time for the challenge in seconds.
+     * Set to null to disable expiration.
+     */
+    'expires' => env('ALTCHA_EXPIRES', 60),
+
+    /*
+     * The length of the salt to use for the challenge.
+     */
+    'salt_length' => env('ALTCHA_SALT_LENGTH', 12),
+
+    /*
      * The route path to use for the challenge.
      * If you want to implement the logic yourself
      * set this to a null or empty value.
