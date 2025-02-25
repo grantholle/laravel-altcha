@@ -2,6 +2,4 @@
 
 namespace GrantHolle\Altcha\Exceptions;
 
-class InvalidAlgorithmException extends \Exception
-{
-}
+class InvalidAlgorithmException extends \Exception {}
