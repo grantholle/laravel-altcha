@@ -14,7 +14,7 @@ class Altcha
         protected int $rangeMax,
     ) {}
 
-    public function createChallenge(?string $salt = null, ?int $number = null): array
+    public function createChallenge(?string $salt = null, ?int $number = null, ?int $expiration = null): array
     {
         $salt = $salt ?? bin2hex(random_bytes(config('altcha.salt_length')));
         $number = $number ?? random_int($this->rangeMin, $this->rangeMax);
@@ -26,8 +26,8 @@ class Altcha
             default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-256, SHA-384 or SHA-512.'),
         };
 
-        if (is_int(config('altcha.expires'))) {
-            $salt .= '?expires='.time() + config('altcha.expires');
+        if ($expiration || is_int(config('altcha.expires'))) {
+            $salt .= '?expires='.($expiration ?? (time() + config('altcha.expires')));
         }
 
         $challenge = hash($algorithm, $salt.$number);
@@ -48,12 +48,13 @@ class Altcha
         if ($json !== null) {
             $salt = Str::before($json['salt'], '?');
             parse_str(Str::after($json['salt'], '?'), $params);
+            $expiration = (int) $params['expires'] ?? null;
 
-            $check = $this->createChallenge($salt, $json['number']);
-
-            if (isset($params['expires']) && $params['expires'] < time()) {
+            if (!is_null($expiration) && $expiration < time()) {
                 return false;
             }
+
+            $check = $this->createChallenge($salt, $json['number'], $expiration);
 
             return $json['algorithm'] === $check['algorithm']
                 && $json['challenge'] === $check['challenge']

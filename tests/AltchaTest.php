@@ -27,6 +27,7 @@ it('can use endpoint to get challenge', function () {
 it('can validate challenge using rule', function () {
     $challenge = app(Altcha::class)
         ->createChallenge(number: 10);
+    sleep(1);
     $challenge['number'] = 10;
     $encoded = base64_encode(json_encode($challenge));
 
