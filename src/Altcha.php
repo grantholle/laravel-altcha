@@ -50,7 +50,7 @@ class Altcha
             parse_str(Str::after($json['salt'], '?'), $params);
             $expiration = (int) $params['expires'] ?? null;
 
-            if (!is_null($expiration) && $expiration < time()) {
+            if (! is_null($expiration) && $expiration < time()) {
                 return false;
             }
 
