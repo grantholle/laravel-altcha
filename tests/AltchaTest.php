@@ -1,6 +1,8 @@
 <?php
 
 use GrantHolle\Altcha\Altcha;
+use GrantHolle\Altcha\Rules\ValidAltcha;
+use Illuminate\Support\Facades\Validator;
 
 it('can generate challenge', function () {
     $challenge = app(Altcha::class)->createChallenge();
@@ -31,10 +33,10 @@ it('can validate challenge using rule', function () {
     $challenge['number'] = 10;
     $encoded = base64_encode(json_encode($challenge));
 
-    $passes = \Illuminate\Support\Facades\Validator::make([
+    $passes = Validator::make([
         'payload' => $encoded,
     ], [
-        'payload' => [new \GrantHolle\Altcha\Rules\ValidAltcha],
+        'payload' => [new ValidAltcha],
     ])->passes();
 
     expect($passes)->toBeTrue();
@@ -46,10 +48,10 @@ it('can fail validation with incorrect challenge', function () {
     $challenge['number'] = 11;
     $encoded = base64_encode(json_encode($challenge));
 
-    $passes = \Illuminate\Support\Facades\Validator::make([
+    $passes = Validator::make([
         'payload' => $encoded,
     ], [
-        'payload' => [new \GrantHolle\Altcha\Rules\ValidAltcha],
+        'payload' => [new ValidAltcha],
     ])->passes();
 
     expect($passes)->toBeFalse();
@@ -62,13 +64,32 @@ it('can fail validation past expiration', function () {
     $challenge = app(Altcha::class)
         ->createChallenge(number: 10);
     $challenge['number'] = 10;
+    expect($challenge['salt'])->toContain('expires');
     $encoded = base64_encode(json_encode($challenge));
 
-    $passes = \Illuminate\Support\Facades\Validator::make([
+    $passes = Validator::make([
         'payload' => $encoded,
     ], [
-        'payload' => [new \GrantHolle\Altcha\Rules\ValidAltcha],
+        'payload' => [new ValidAltcha],
     ])->passes();
 
     expect($passes)->toBeFalse();
+});
+
+it('does not require expires parameter', function () {
+    config()->set('altcha.expires', null);
+
+    $challenge = app(Altcha::class)
+        ->createChallenge(number: 10);
+    $challenge['number'] = 10;
+
+    expect($challenge['salt'])->not->toContain('expires');
+
+    $passes = Validator::make([
+        'payload' => base64_encode(json_encode($challenge)),
+    ], [
+        'payload' => [new ValidAltcha],
+    ])->passes();
+
+    expect($passes)->toBeTrue();
 });
