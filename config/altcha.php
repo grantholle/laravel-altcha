@@ -6,7 +6,7 @@ return [
      * The algorithm to use for hashing the challenge.
      * Should be SHA-256, SHA-384 or SHA-512.
      */
-    'algorithm' => env('ALTCHA_ALGORITHM', \AltchaOrg\Altcha\Hasher\Algorithm::SHA256),
+    'algorithm' => env('ALTCHA_ALGORITHM', 'SHA-256'),
 
     /*
      * The secret key to use for hashing the challenge.
