@@ -2,6 +2,7 @@
 
 use AltchaOrg\Altcha\Hasher\Algorithm;
 use GrantHolle\Altcha\Altcha;
+use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
 use GrantHolle\Altcha\Rules\ValidAltcha;
 use Illuminate\Support\Facades\Validator;
 
@@ -101,6 +102,12 @@ it('can use a specific expiration duration in seconds when generating a challeng
     $expires = Str::of($challenge['salt'])->after('?expires=')->toInteger();
     expect($expires)->toBeGreaterThanOrEqual($now + 12);
 });
+
+it("throws when the algorithm isn't supported", function () {
+    config(['altcha.algorithm' => 'foobar']);
+
+    app(Altcha::class)->createChallenge();
+})->throws(InvalidAlgorithmException::class);
 
 function solve(array $challenge): string
 {
