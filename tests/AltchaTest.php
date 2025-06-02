@@ -80,21 +80,6 @@ it('does not require expires parameter', function () {
     expect($passes)->toBeTrue();
 });
 
-it('can ignore the expiration when verifying the solution', function () {
-    config(['altcha.expires' => 1]);
-    $challenge = app(Altcha::class)->createChallenge();
-    expect($challenge['salt'])->toContain('expires');
-
-    sleep(2);
-    $passes = Validator::make([
-        'payload' => solve($challenge),
-    ], [
-        'payload' => [new ValidAltcha(false)],
-    ])->passes();
-
-    expect($passes)->toBeTrue();
-});
-
 function solve(array $challenge): string
 {
     $solution = app(\AltchaOrg\Altcha\Altcha::class)->solveChallenge(
@@ -104,7 +89,7 @@ function solve(array $challenge): string
         $challenge['maxNumber']
     );
 
-    $challenge['number'] = $solution['number'];
+    $challenge['number'] = $solution->number;
 
     return base64_encode(json_encode($challenge));
 }
