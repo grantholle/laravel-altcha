@@ -1,5 +1,6 @@
 <?php
 
+use AltchaOrg\Altcha\Hasher\Algorithm;
 use GrantHolle\Altcha\Altcha;
 use GrantHolle\Altcha\Rules\ValidAltcha;
 use Illuminate\Support\Facades\Validator;
@@ -106,7 +107,7 @@ function solve(array $challenge): string
     $solution = app(\AltchaOrg\Altcha\Altcha::class)->solveChallenge(
         $challenge['challenge'],
         $challenge['salt'],
-        config('altcha.algorithm'),
+        Algorithm::SHA256,
         $challenge['maxNumber']
     );
 
