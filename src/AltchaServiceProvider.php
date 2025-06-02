@@ -3,6 +3,7 @@
 namespace GrantHolle\Altcha;
 
 use GrantHolle\Altcha\Http\Controllers\AltchaChallengeController;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -16,10 +17,11 @@ class AltchaServiceProvider extends PackageServiceProvider
 
     public function packageRegistered()
     {
-        $this->app->bind(Altcha::class, fn () => new Altcha(
-            config('altcha.algorithm'),
-            config('altcha.hmac_key'),
-            config('altcha.range_max'),
+        $this->app->bind(\AltchaOrg\Altcha\Altcha::class, fn () => new \AltchaOrg\Altcha\Altcha(config('altcha.hmac_key')));
+        $this->app->bind(Altcha::class, fn (Application $app) => new Altcha(
+            $app->make(\AltchaOrg\Altcha\Altcha::class),
+            $app['config']->get('altcha.algorithm'),
+            $app['config']->get('altcha.range_max'),
         ));
     }
 

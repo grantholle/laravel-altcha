@@ -5,37 +5,29 @@ namespace GrantHolle\Altcha;
 use AltchaOrg\Altcha\BaseChallengeOptions;
 use AltchaOrg\Altcha\ChallengeOptions;
 use AltchaOrg\Altcha\Hasher\Algorithm;
-use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
 
 class Altcha
 {
-    public \AltchaOrg\Altcha\Altcha $altcha;
-
     public function __construct(
-        protected string $algorithm,
-        protected string $key,
+        protected \AltchaOrg\Altcha\Altcha $altcha,
+        protected Algorithm $algorithm,
         protected int $rangeMax,
     ) {
-        $this->altcha = new \AltchaOrg\Altcha\Altcha($this->key);
+        //
     }
 
+    /**
+     * @var int|null $expiration
+     * @return array
+     */
     public function createChallenge(?int $expiration = null): array
     {
-        $algorithm = match (strtolower($this->algorithm)) {
-            'sha-1' => Algorithm::SHA1,
-            'sha-256' => Algorithm::SHA256,
-            'sha-512' => Algorithm::SHA512,
-            default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-1, SHA-256 or SHA-512.'),
-        };
-
-        if ($expiration || is_int(config('altcha.expires'))) {
-            $seconds = config('altcha.expires', $expiration);
-        }
+        $seconds = $expiration ?? config('altcha.expires');
 
         $challenge = $this->altcha->createChallenge(new ChallengeOptions(
-            algorithm: $algorithm,
+            algorithm: $this->algorithm,
             maxNumber: $this->rangeMax ?? BaseChallengeOptions::DEFAULT_MAX_NUMBER,
-            expires: (new \DateTimeImmutable())->add(new \DateInterval("PT{$seconds}S")),
+            expires: $seconds ? (new \DateTimeImmutable())->add(new \DateInterval("PT{$seconds}S")) : null,
             saltLength: config('altcha.salt_length')
         ));
 
@@ -47,8 +39,8 @@ class Altcha
      * @var bool $checkExpires
      * @return bool
      */
-    public function verifySolution(mixed $payload, bool $checkExpires = true): bool
+    public function verifySolution(mixed $payload): bool
     {
-        return $this->altcha->verifySolution($payload, $checkExpires);
+        return $this->altcha->verifySolution($payload);
     }
 }
