@@ -7,7 +7,6 @@ on:
       - '.github/workflows/run-tests.yml'
       - 'phpunit.xml.dist'
       - 'composer.json'
-      - 'composer.lock'
 
 jobs:
   test:
