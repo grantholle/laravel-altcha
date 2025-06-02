@@ -80,6 +80,27 @@ it('does not require expires parameter', function () {
     expect($passes)->toBeTrue();
 });
 
+it('can use a specific salt length', function () {
+    config(['altcha.expires' => null, 'altcha.salt_length' => 12]);
+    $challenge = app(Altcha::class)->createChallenge();
+    expect($challenge['salt'])->toHaveLength(24);
+
+    config(['altcha.expires' => null, 'altcha.salt_length' => 24]);
+    $challenge = app(Altcha::class)->createChallenge();
+    expect($challenge['salt'])->toHaveLength(48);
+});
+
+it('can use a specific expiration duration in seconds when generating a challenge', function () {
+    config(['altcha.expires' => 10]);
+    $now = time();
+
+    $challenge = app(Altcha::class)->createChallenge(12);
+    expect($challenge['salt'])->toContain('expires');
+
+    $expires = Str::of($challenge['salt'])->after('?expires=')->toInteger();
+    expect($expires)->toBeGreaterThanOrEqual($now + 12);
+});
+
 function solve(array $challenge): string
 {
     $solution = app(\AltchaOrg\Altcha\Altcha::class)->solveChallenge(

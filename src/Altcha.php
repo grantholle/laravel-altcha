@@ -12,6 +12,8 @@ class Altcha
         protected \AltchaOrg\Altcha\Altcha $altcha,
         protected Algorithm $algorithm,
         protected int $rangeMax,
+        protected int $saltLength,
+        protected ?int $expires = null,
     ) {
         //
     }
@@ -22,13 +24,13 @@ class Altcha
      */
     public function createChallenge(?int $expiration = null): array
     {
-        $seconds = $expiration ?? config('altcha.expires');
+        $seconds = $expiration ?? $this->expires;
 
         $challenge = $this->altcha->createChallenge(new ChallengeOptions(
             algorithm: $this->algorithm,
             maxNumber: $this->rangeMax ?? BaseChallengeOptions::DEFAULT_MAX_NUMBER,
             expires: $seconds ? (new \DateTimeImmutable())->add(new \DateInterval("PT{$seconds}S")) : null,
-            saltLength: config('altcha.salt_length')
+            saltLength: $this->saltLength,
         ));
 
         return get_object_vars($challenge);
