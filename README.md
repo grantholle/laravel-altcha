@@ -93,7 +93,7 @@ const form = useForm({
 
 ## Backend validation
 
-To validate the frontend-generated token/payload, there's a `ValidAltcha` rule you can use, assuming the token is passed as `altcha` in the request:
+To validate the frontend-generated token/payload, there's a `ValidAltcha` rule you can use, assuming the token is passed as `token` in the request:
 
 ```php
 use GrantHolle\Altcha\Rules\ValidAltcha;
@@ -101,7 +101,7 @@ use GrantHolle\Altcha\Rules\ValidAltcha;
 $request->validate([
     'email' => ['required', 'email'],
     'password' => ['required'],
-    'altcha' => ['required', new ValidAltcha()],
+    'token' => ['required', new ValidAltcha()],
 ]);
 ```
 
