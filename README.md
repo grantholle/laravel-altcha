@@ -101,7 +101,7 @@ use GrantHolle\Altcha\Rules\ValidAltcha;
 $request->validate([
     'email' => ['required', 'email'],
     'password' => ['required'],
-    'token' => ['required', new ValidAltcha()],
+    'token' => ['required', new ValidAltcha],
 ]);
 ```
 
