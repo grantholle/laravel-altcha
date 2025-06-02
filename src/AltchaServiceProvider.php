@@ -11,14 +11,7 @@ class AltchaServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('laravel-altcha')
-            ->hasConfigFile();
+        $package->name('laravel-altcha')->hasConfigFile();
     }
 
     public function packageRegistered()
@@ -26,7 +19,6 @@ class AltchaServiceProvider extends PackageServiceProvider
         $this->app->bind(Altcha::class, fn () => new Altcha(
             config('altcha.algorithm'),
             config('altcha.hmac_key'),
-            config('altcha.range_min'),
             config('altcha.range_max'),
         ));
     }
