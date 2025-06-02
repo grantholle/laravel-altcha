@@ -8,9 +8,11 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidAltcha implements ValidationRule
 {
-    public function __construct(protected Altcha $altcha)
+    protected Altcha $altcha;
+
+    public function __construct()
     {
-        //
+        $this->altcha = app(Altcha::class);
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
