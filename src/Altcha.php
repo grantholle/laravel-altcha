@@ -2,67 +2,55 @@
 
 namespace GrantHolle\Altcha;
 
+use AltchaOrg\Altcha\BaseChallengeOptions;
+use AltchaOrg\Altcha\ChallengeOptions;
+use AltchaOrg\Altcha\Hasher\Algorithm;
 use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
-use Illuminate\Support\Str;
 
 class Altcha
 {
     public function __construct(
+        protected \AltchaOrg\Altcha\Altcha $altcha,
         protected string $algorithm,
-        protected string $key,
-        protected int $rangeMin,
         protected int $rangeMax,
-    ) {}
-
-    public function createChallenge(?string $salt = null, ?int $number = null, ?int $expiration = null): array
-    {
-        $salt = $salt ?? bin2hex(random_bytes(config('altcha.salt_length')));
-        $number = $number ?? random_int($this->rangeMin, $this->rangeMax);
-
-        $algorithm = match (strtolower($this->algorithm)) {
-            'sha-256' => 'sha256',
-            'sha-384' => 'sha384',
-            'sha-512' => 'sha512',
-            default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-256, SHA-384 or SHA-512.'),
-        };
-
-        if ($expiration || is_int(config('altcha.expires'))) {
-            $salt .= '?expires='.($expiration ?? (time() + config('altcha.expires')));
-        }
-
-        $challenge = hash($algorithm, $salt.$number);
-        $signature = hash_hmac($algorithm, $challenge, $this->key);
-
-        return [
-            'algorithm' => $this->algorithm,
-            'challenge' => $challenge,
-            'salt' => $salt,
-            'signature' => $signature,
-        ];
+        protected int $saltLength,
+        protected ?int $expires = null,
+    ) {
+        //
     }
 
-    public function validPayload(string $payload): bool
+    /**
+     * @var int|null $expiration
+     * @return array
+     * @throws \GrantHolle\Altcha\Exceptions\InvalidAlgorithmException
+     */
+    public function createChallenge(?int $expiration = null): array
     {
-        $json = json_decode(base64_decode($payload), true);
+        $seconds = $expiration ?? $this->expires;
+        $algorithm = match (strtolower($this->algorithm)) {
+            'sha-1' => Algorithm::SHA1,
+            'sha-256' => Algorithm::SHA256,
+            'sha-512' => Algorithm::SHA512,
+            default => throw new InvalidAlgorithmException('Algorithm must be set to SHA-1, SHA-256 or SHA-512.'),
+        };
 
-        if ($json !== null) {
-            $salt = Str::before($json['salt'], '?');
-            parse_str(Str::after($json['salt'], '?'), $params);
-            $expiration = isset($params['expires'])
-                ? (int) $params['expires']
-                : null;
+        $challenge = $this->altcha->createChallenge(new ChallengeOptions(
+            algorithm: $algorithm,
+            maxNumber: $this->rangeMax ?? BaseChallengeOptions::DEFAULT_MAX_NUMBER,
+            expires: $seconds ? (new \DateTimeImmutable())->add(new \DateInterval("PT{$seconds}S")) : null,
+            saltLength: $this->saltLength,
+        ));
 
-            if (! is_null($expiration) && $expiration < time()) {
-                return false;
-            }
+        return get_object_vars($challenge);
+    }
 
-            $check = $this->createChallenge($salt, $json['number'], $expiration);
-
-            return $json['algorithm'] === $check['algorithm']
-                && $json['challenge'] === $check['challenge']
-                && $json['signature'] === $check['signature'];
-        }
-
-        return false;
+    /**
+     * @var array|string $payload
+     * @var bool $checkExpires
+     * @return bool
+     */
+    public function verifySolution(mixed $payload): bool
+    {
+        return $this->altcha->verifySolution($payload);
     }
 }

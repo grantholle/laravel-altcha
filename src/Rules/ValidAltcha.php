@@ -8,12 +8,16 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidAltcha implements ValidationRule
 {
-    /**
-     * Run the validation rule.
-     */
+    protected Altcha $altcha;
+
+    public function __construct()
+    {
+        $this->altcha = app(Altcha::class);
+    }
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! app(Altcha::class)->validPayload($value)) {
+        if (! $this->altcha->verifySolution($value)) {
             $fail('Invalid captcha.');
         }
     }

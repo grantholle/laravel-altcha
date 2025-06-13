@@ -28,7 +28,7 @@ In `.env` (or published config file), set the following variables:
 ```dotenv
 # Required, sort of like a password
 ALTCHA_HMAC_KEY=
-# Optional, defaults to SHA-256. Can be SHA-384 or SHA-512
+# Optional, defaults to SHA-256. Can be SHA-1 or SHA-512
 # ALTCHA_ALGORITHM="SHA-256"
 ```
 
@@ -101,7 +101,7 @@ use GrantHolle\Altcha\Rules\ValidAltcha;
 $request->validate([
     'email' => ['required', 'email'],
     'password' => ['required'],
-    'altcha' => ['required', new ValidAltcha()],
+    'token' => ['required', new ValidAltcha],
 ]);
 ```
 
