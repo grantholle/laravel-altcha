@@ -20,8 +20,8 @@ class Altcha
     }
 
     /**
-     * @var int|null $expiration
-     * @return array
+     * @var int|null
+     *
      * @throws \GrantHolle\Altcha\Exceptions\InvalidAlgorithmException
      */
     public function createChallenge(?int $expiration = null): array
@@ -37,7 +37,7 @@ class Altcha
         $challenge = $this->altcha->createChallenge(new ChallengeOptions(
             algorithm: $algorithm,
             maxNumber: $this->rangeMax ?? BaseChallengeOptions::DEFAULT_MAX_NUMBER,
-            expires: $seconds ? (new \DateTimeImmutable())->add(new \DateInterval("PT{$seconds}S")) : null,
+            expires: $seconds ? (new \DateTimeImmutable)->add(new \DateInterval("PT{$seconds}S")) : null,
             saltLength: $this->saltLength,
         ));
 
@@ -45,9 +45,8 @@ class Altcha
     }
 
     /**
-     * @var array|string $payload
-     * @var bool $checkExpires
-     * @return bool
+     * @var array|string
+     * @var bool
      */
     public function verifySolution(mixed $payload): bool
     {
