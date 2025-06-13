@@ -1,6 +1,8 @@
 name: run-tests
 
 on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
   push:
     paths:
       - '**.php'
@@ -10,6 +12,7 @@ on:
 
 jobs:
   test:
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
