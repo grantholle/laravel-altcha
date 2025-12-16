@@ -17,6 +17,11 @@ class ValidAltcha implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        $bypass = config('altcha.testing_bypass');
+        if (app()->environment('testing') && $bypass && $bypass === $value) {
+            return;
+        }
+
         if (! $this->altcha->verifySolution($value)) {
             $fail('Invalid captcha.');
         }

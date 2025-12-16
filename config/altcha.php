@@ -42,4 +42,9 @@ return [
      */
     'middleware' => ['web', 'throttle:10,1'],
 
+    /*
+     * The value to use for bypass validation in tests.
+     * If you want to bypass validation in tests, set this to the value of the challenge. e.g. 'valid'
+     */
+    'testing_bypass' => env('ALTCHA_TESTING_BYPASS'),
 ];
