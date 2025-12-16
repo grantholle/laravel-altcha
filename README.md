@@ -105,6 +105,29 @@ $request->validate([
 ]);
 ```
 
+# Bypass validation in tests
+
+To successfully test routes protected by Altcha you can optionally set a `ALTCHA_TESTING_BYPASS` value in your `.env` file.
+Sending that value in your test requests will be treated as valid.
+
+```bash
+# .env
+ALTCHA_TESTING_BYPASS=valid
+```
+
+```php
+// tests/demoTest.php
+it('validates Altcha challenge', function() {
+    $this->post('store-something', [
+      'altcha' => 'anything or null'
+    ])->assertSessionHasErrors('altcha');
+    
+    $this->post('store-something', [
+      'altcha' => config('altcha.testing_bypass')
+    ])->assertSessionHasNoErrors();
+});
+```
+
 ## Testing
 
 ```bash

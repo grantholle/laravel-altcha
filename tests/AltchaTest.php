@@ -109,6 +109,18 @@ it("throws when the algorithm isn't supported", function () {
     app(Altcha::class)->createChallenge();
 })->throws(InvalidAlgorithmException::class);
 
+it('can bypass validation in tests', function () {
+    config(['altcha.testing_bypass' => 'valid']);
+    $challenge = app(Altcha::class)->createChallenge();
+    $passes = Validator::make([
+        'payload' => 'valid',
+    ], [
+        'payload' => [new ValidAltcha],
+    ])->passes();
+
+    expect($passes)->toBeTrue();
+});
+
 function solve(array $challenge): string
 {
     $solution = app(\AltchaOrg\Altcha\Altcha::class)->solveChallenge(
