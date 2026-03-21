@@ -2,6 +2,19 @@
 
 All notable changes to `laravel-altcha` will be documented in this file.
 
+## v2.2.0 - 2026-03-21
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/grantholle/laravel-altcha/pull/25
+* Add Laravel 13 support by @grantholle in https://github.com/grantholle/laravel-altcha/pull/26
+
+### New Contributors
+
+* @grantholle made their first contribution in https://github.com/grantholle/laravel-altcha/pull/26
+
+**Full Changelog**: https://github.com/grantholle/laravel-altcha/compare/2.1.1...2.2.0
+
 ## v2.1.1 - 2025-12-16
 
 - Add new testing validation bypass in #22 from @tobz-nz
