@@ -134,3 +134,34 @@ function solve(array $challenge): string
 
     return base64_encode(json_encode($challenge));
 }
+
+it('rejects a solution that was already used', function () {
+    config(['altcha.single_use' => true]);
+    $payload = solve(app(Altcha::class)->createChallenge());
+
+    $validate = fn () => Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes();
+
+    expect($validate())->toBeTrue();
+    expect($validate())->toBeFalse();
+});
+
+it('accepts a used solution again when single use is off', function () {
+    config(['altcha.single_use' => false]);
+    $payload = solve(app(Altcha::class)->createChallenge());
+
+    $validate = fn () => Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes();
+
+    expect($validate())->toBeTrue();
+    expect($validate())->toBeTrue();
+});
+
+it('does not spend a solution that failed verification', function () {
+    config(['altcha.single_use' => true]);
+    $challenge = app(Altcha::class)->createChallenge();
+    $wrong = $challenge + ['number' => -1];
+
+    $validate = fn (string $payload) => Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes();
+
+    expect($validate(base64_encode(json_encode($wrong))))->toBeFalse();
+    expect($validate(solve($challenge)))->toBeTrue();
+});

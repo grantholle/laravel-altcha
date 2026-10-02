@@ -26,7 +26,8 @@ class AltchaServiceProvider extends PackageServiceProvider
             $app['config']->get('altcha.algorithm'),
             $app['config']->get('altcha.range_max'),
             $app['config']->get('altcha.salt_length'),
-            $app['config']->get('altcha.expires')
+            $app['config']->get('altcha.expires'),
+            (bool) $app['config']->get('altcha.single_use', false),
         ));
     }
 

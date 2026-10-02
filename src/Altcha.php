@@ -6,6 +6,7 @@ use AltchaOrg\Altcha\BaseChallengeOptions;
 use AltchaOrg\Altcha\ChallengeOptions;
 use AltchaOrg\Altcha\Hasher\Algorithm;
 use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
+use Illuminate\Support\Facades\Cache;
 
 class Altcha
 {
@@ -15,6 +16,7 @@ class Altcha
         protected int $rangeMax,
         protected int $saltLength,
         protected ?int $expires = null,
+        protected bool $singleUse = false,
     ) {
         //
     }
@@ -50,6 +52,30 @@ class Altcha
      */
     public function verifySolution(mixed $payload): bool
     {
-        return $this->altcha->verifySolution($payload);
+        if (! $this->altcha->verifySolution($payload)) {
+            return false;
+        }
+
+        return ! $this->singleUse || $this->spend($payload);
+    }
+
+    /**
+     * Remembers a verified solution so it cannot be submitted again.
+     * add() is atomic, so two requests racing the same payload cannot both win.
+     */
+    protected function spend(mixed $payload): bool
+    {
+        $data = is_string($payload) ? json_decode(base64_decode($payload, true) ?: '', true) : $payload;
+
+        if (! is_array($data) || ! is_string($data['signature'] ?? null)) {
+            return false;
+        }
+
+        // Keep the record until the challenge itself expires; one without
+        // an expiry stays valid forever, so its record must too.
+        parse_str(parse_url($data['salt'] ?? '', PHP_URL_QUERY) ?? '', $params);
+        $ttl = isset($params['expires']) ? max(1, (int) $params['expires'] - time()) : null;
+
+        return Cache::add('altcha:spent:'.hash('sha256', $data['signature']), true, $ttl);
     }
 }

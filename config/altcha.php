@@ -26,6 +26,13 @@ return [
     'expires' => env('ALTCHA_EXPIRES', 10),
 
     /*
+     * Reject a solution that has already been verified once.
+     * Without this, a solved challenge can be replayed until it expires.
+     * Spent solutions are remembered in the default cache store.
+     */
+    'single_use' => env('ALTCHA_SINGLE_USE', false),
+
+    /*
      * The length of the salt to use for the challenge.
      */
     'salt_length' => env('ALTCHA_SALT_LENGTH', 12),
