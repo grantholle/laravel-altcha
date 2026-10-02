@@ -123,7 +123,7 @@ it('can bypass validation in tests', function () {
 
 function solve(array $challenge): string
 {
-    $solution = app(\AltchaOrg\Altcha\V1\Altcha::class)->solveChallenge(
+    $solution = app(AltchaOrg\Altcha\V1\Altcha::class)->solveChallenge(
         $challenge['challenge'],
         $challenge['salt'],
         Algorithm::SHA256,
@@ -164,4 +164,37 @@ it('does not spend a solution that failed verification', function () {
 
     expect($validate(base64_encode(json_encode($wrong))))->toBeFalse();
     expect($validate(solve($challenge)))->toBeTrue();
+});
+
+it('keeps a spent solution through its last valid second', function () {
+    config(['altcha.single_use' => true, 'altcha.expires' => 10]);
+    $challenge = app(Altcha::class)->createChallenge();
+    $payload = solve($challenge);
+    $expires = Str::of($challenge['salt'])->after('?expires=')->toInteger();
+
+    $validate = fn () => Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes();
+
+    expect($validate())->toBeTrue();
+    $this->travelTo(Carbon\Carbon::createFromTimestamp($expires + 0.999));
+    expect($validate())->toBeFalse();
+});
+
+it('keeps a spent solution without an expiry', function () {
+    config(['altcha.single_use' => true, 'altcha.expires' => null]);
+    $payload = solve(app(Altcha::class)->createChallenge());
+
+    $validate = fn () => Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes();
+
+    expect($validate())->toBeTrue();
+    $this->travel(30)->days();
+    expect($validate())->toBeFalse();
+});
+
+it('spends with a finite ttl so the store add stays atomic', function () {
+    config(['altcha.single_use' => true, 'altcha.expires' => null]);
+    $payload = solve(app(Altcha::class)->createChallenge());
+
+    Cache::shouldReceive('add')->once()->withArgs(fn ($key, $value, $ttl) => is_int($ttl) && $ttl > 0)->andReturn(true);
+
+    expect(Validator::make(['payload' => $payload], ['payload' => [new ValidAltcha]])->passes())->toBeTrue();
 });

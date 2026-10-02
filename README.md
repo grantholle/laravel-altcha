@@ -30,7 +30,9 @@ In `.env` (or published config file), set the following variables:
 ALTCHA_HMAC_KEY=
 # Optional, defaults to SHA-256. Can be SHA-1 or SHA-512
 # ALTCHA_ALGORITHM="SHA-256"
-# Optional, reject a solution that was already used once (needs a shared cache store)
+# Optional, reject a solution that was already used once. Use a cache store shared by
+# all app servers with an atomic add (redis, memcached, database, dynamodb).
+# Without ALTCHA_EXPIRES a used solution is remembered for a year, so set both
 # ALTCHA_SINGLE_USE=true
 ```
 

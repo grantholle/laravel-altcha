@@ -71,10 +71,11 @@ class Altcha
             return false;
         }
 
-        // Keep the record until the challenge itself expires; one without
-        // an expiry stays valid forever, so its record must too.
+        // Keep the record through the challenge's last valid second (the
+        // verifier accepts time() == expires). A challenge without an expiry
+        // gets a year: a null TTL would skip the store's atomic add().
         parse_str(parse_url($data['salt'] ?? '', PHP_URL_QUERY) ?? '', $params);
-        $ttl = isset($params['expires']) ? max(1, (int) $params['expires'] - time()) : null;
+        $ttl = isset($params['expires']) ? max(1, (int) $params['expires'] - time() + 1) : 31_536_000;
 
         return Cache::add('altcha:spent:'.hash('sha256', $data['signature']), true, $ttl);
     }
