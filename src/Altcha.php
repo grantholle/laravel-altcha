@@ -2,19 +2,21 @@
 
 namespace GrantHolle\Altcha;
 
-use AltchaOrg\Altcha\BaseChallengeOptions;
-use AltchaOrg\Altcha\ChallengeOptions;
-use AltchaOrg\Altcha\Hasher\Algorithm;
+use AltchaOrg\Altcha\V1\BaseChallengeOptions;
+use AltchaOrg\Altcha\V1\ChallengeOptions;
+use AltchaOrg\Altcha\V1\Hasher\Algorithm;
 use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
+use Illuminate\Support\Facades\Cache;
 
 class Altcha
 {
     public function __construct(
-        protected \AltchaOrg\Altcha\Altcha $altcha,
+        protected \AltchaOrg\Altcha\V1\Altcha $altcha,
         protected string $algorithm,
         protected int $rangeMax,
         protected int $saltLength,
         protected ?int $expires = null,
+        protected bool $singleUse = false,
     ) {
         //
     }
@@ -50,6 +52,31 @@ class Altcha
      */
     public function verifySolution(mixed $payload): bool
     {
-        return $this->altcha->verifySolution($payload);
+        if (! $this->altcha->verifySolution($payload)) {
+            return false;
+        }
+
+        return ! $this->singleUse || $this->spend($payload);
+    }
+
+    /**
+     * Remembers a verified solution so it cannot be submitted again.
+     * add() is atomic, so two requests racing the same payload cannot both win.
+     */
+    protected function spend(mixed $payload): bool
+    {
+        $data = is_string($payload) ? json_decode(base64_decode($payload, true) ?: '', true) : $payload;
+
+        if (! is_array($data) || ! is_string($data['signature'] ?? null)) {
+            return false;
+        }
+
+        // Keep the record through the challenge's last valid second (the
+        // verifier accepts time() == expires). A challenge without an expiry
+        // gets a year: a null TTL would skip the store's atomic add().
+        parse_str(parse_url($data['salt'] ?? '', PHP_URL_QUERY) ?? '', $params);
+        $ttl = isset($params['expires']) ? max(1, (int) $params['expires'] - time() + 1) : 31_536_000;
+
+        return Cache::add('altcha:spent:'.hash('sha256', $data['signature']), true, $ttl);
     }
 }
