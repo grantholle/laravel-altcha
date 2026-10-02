@@ -2,16 +2,16 @@
 
 namespace GrantHolle\Altcha;
 
-use AltchaOrg\Altcha\BaseChallengeOptions;
-use AltchaOrg\Altcha\ChallengeOptions;
-use AltchaOrg\Altcha\Hasher\Algorithm;
+use AltchaOrg\Altcha\V1\BaseChallengeOptions;
+use AltchaOrg\Altcha\V1\ChallengeOptions;
+use AltchaOrg\Altcha\V1\Hasher\Algorithm;
 use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
 use Illuminate\Support\Facades\Cache;
 
 class Altcha
 {
     public function __construct(
-        protected \AltchaOrg\Altcha\Altcha $altcha,
+        protected \AltchaOrg\Altcha\V1\Altcha $altcha,
         protected string $algorithm,
         protected int $rangeMax,
         protected int $saltLength,

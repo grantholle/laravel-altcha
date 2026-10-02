@@ -1,6 +1,6 @@
 <?php
 
-use AltchaOrg\Altcha\Hasher\Algorithm;
+use AltchaOrg\Altcha\V1\Hasher\Algorithm;
 use GrantHolle\Altcha\Altcha;
 use GrantHolle\Altcha\Exceptions\InvalidAlgorithmException;
 use GrantHolle\Altcha\Rules\ValidAltcha;
@@ -123,7 +123,7 @@ it('can bypass validation in tests', function () {
 
 function solve(array $challenge): string
 {
-    $solution = app(\AltchaOrg\Altcha\Altcha::class)->solveChallenge(
+    $solution = app(\AltchaOrg\Altcha\V1\Altcha::class)->solveChallenge(
         $challenge['challenge'],
         $challenge['salt'],
         Algorithm::SHA256,

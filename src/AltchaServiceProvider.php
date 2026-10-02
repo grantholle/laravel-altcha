@@ -17,12 +17,12 @@ class AltchaServiceProvider extends PackageServiceProvider
 
     public function packageRegistered()
     {
-        $this->app->bind(\AltchaOrg\Altcha\Altcha::class, fn () => new \AltchaOrg\Altcha\Altcha(
+        $this->app->bind(\AltchaOrg\Altcha\V1\Altcha::class, fn () => new \AltchaOrg\Altcha\V1\Altcha(
             config('altcha.hmac_key')
         ));
 
         $this->app->bind(Altcha::class, fn (Application $app) => new Altcha(
-            $app->make(\AltchaOrg\Altcha\Altcha::class),
+            $app->make(\AltchaOrg\Altcha\V1\Altcha::class),
             $app['config']->get('altcha.algorithm'),
             $app['config']->get('altcha.range_max'),
             $app['config']->get('altcha.salt_length'),
