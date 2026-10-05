@@ -24,7 +24,7 @@ class Altcha
     /**
      * @var int|null
      *
-     * @throws \GrantHolle\Altcha\Exceptions\InvalidAlgorithmException
+     * @throws InvalidAlgorithmException
      */
     public function createChallenge(?int $expiration = null): array
     {
