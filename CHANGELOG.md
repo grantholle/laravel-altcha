@@ -2,6 +2,20 @@
 
 All notable changes to `laravel-altcha` will be documented in this file.
 
+## 2.3.0 - 2026-10-05
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.1.0 by @dependabot[bot] in https://github.com/grantholle/laravel-altcha/pull/29
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/grantholle/laravel-altcha/pull/31
+* Add opt-in single-use solutions and upgrade to altcha-org/altcha v2 by @troioi-vn in https://github.com/grantholle/laravel-altcha/pull/33
+
+### New Contributors
+
+* @troioi-vn made their first contribution in https://github.com/grantholle/laravel-altcha/pull/33
+
+**Full Changelog**: https://github.com/grantholle/laravel-altcha/compare/2.2.0...2.3.0
+
 ## v2.2.0 - 2026-03-21
 
 ### What's Changed
