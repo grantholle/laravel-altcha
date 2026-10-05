@@ -36,6 +36,10 @@ jobs:
             php: 8.2
           - laravel: 10.*
             php: 8.5
+          - laravel: 11.*
+            php: 8.5
+          - laravel: 12.*
+            php: 8.5
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
